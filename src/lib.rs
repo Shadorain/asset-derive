@@ -1,3 +1,34 @@
+//! # asset-derive
+//!
+//! WARN: Not fully implemented, work in progress and will be fully usable soon.
+//! Documentation not complete either, this will be done shortly after
+//! implementation is in place.
+//!
+//! Simple rust asset handling derive macro for enums, and a proc-macro learning resource!
+//!
+//! Feel free to offer any advice or create a pull request. This is my first
+//! true attempt at writing proc-macros so it may have some rough edges.
+//!
+//! The original intent of this library was for compile time loading assets into a binary.
+//! This will eventually allow for run-time loading as well, but as for now that will be a
+//! future expansion.
+//!
+//! ## Example
+//!
+//! ```rust
+//! use asset_derive::Asset;
+//!
+//! #[derive(Asset)]
+//! #[asset(basepath = "./icons/", extension = "svg")]
+//! enum Icon {
+//!     #[asset(extension = "png")]
+//!     Select,
+//!     Folder,
+//!     #[asset(filename = "folder-dim")]
+//!     FolderDim,
+//! }
+//! ```
+
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, Data, DeriveInput, Result};
 
