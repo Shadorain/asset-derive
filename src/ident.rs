@@ -29,7 +29,9 @@ impl From<Identifier> for &'static str {
 
             #[allow(unreachable_patterns)]
             _ => {
-                panic!("New `Identifier` variants need to be defined here, and in `SubIdent::list()`")
+                panic!(
+                    "New `Identifier` variants need to be defined here, and in `SubIdent::list()`"
+                )
             }
         }
     }

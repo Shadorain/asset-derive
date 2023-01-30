@@ -1,6 +1,5 @@
 use syn::{
-    __private::Span, punctuated::Punctuated, spanned::Spanned, MetaNameValue, Result,
-    Token,
+    __private::Span, punctuated::Punctuated, spanned::Spanned, MetaNameValue, Result, Token,
 };
 
 use crate::{Error, Identifier};

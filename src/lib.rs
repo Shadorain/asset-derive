@@ -1,25 +1,56 @@
-use std::path::PathBuf;
-
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, Data, DeriveInput, Result, Variant};
+use syn::{parse_macro_input, Data, DeriveInput, Result};
 
 mod attr;
 mod error;
 mod ident;
 
-use attr::{Attribute, Attributes};
+use attr::Attributes;
 use error::Error;
 use ident::Identifier;
 
+#[derive(Debug)]
+#[allow(dead_code)]
 struct Assets {
-    basepath: PathBuf,
-    names: Vec<String>,
+    attrs: Attributes,
+    variants: Vec<Variant>,
 }
 
 impl Assets {
+    pub fn new(input: &DeriveInput) -> Result<Self> {
+        Ok(Self {
+            attrs: Attributes::new(&input.attrs)?,
+            variants: match &input.data {
+                Data::Enum(ref data) => data
+                    .variants
+                    .iter()
+                    .map(Variant::new)
+                    .collect::<Result<Vec<Variant>>>()?,
+                _ => Err(Error::Data(input))?,
+            },
+        })
+    }
+
     /// Should build up the full quote and generated code.
+    #[allow(dead_code)]
     pub fn build(self) {
         todo!();
+    }
+}
+
+#[derive(Debug)]
+#[allow(dead_code)]
+struct Variant {
+    attrs: Attributes,
+    name: String,
+}
+
+impl Variant {
+    pub fn new(var: &'_ syn::Variant) -> Result<Self> {
+        Ok(Self {
+            attrs: Attributes::new(&var.attrs)?,
+            name: var.ident.to_string(),
+        })
     }
 }
 
@@ -30,15 +61,8 @@ pub fn derive_asset(input: TokenStream) -> TokenStream {
 }
 
 fn impl_asset(input: &DeriveInput) -> Result<TokenStream> {
-    // Extract enum variants
-    let variants: Vec<&Variant> = match &input.data {
-        Data::Enum(ref data) => data.variants.iter().collect(),
-        _ => Err(Error::Data(input))?,
-    };
-    eprintln!("Variants: {:#?}", variants);
-
-    let top = Attributes::new(&input.attrs)?;
-    eprintln!("TOP: {:#?}", top);
+    let assets = Assets::new(input);
+    eprintln!("Assets: {:#?}", assets);
 
     Ok(TokenStream::new())
 }

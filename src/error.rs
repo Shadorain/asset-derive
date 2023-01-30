@@ -1,8 +1,6 @@
 use syn::{spanned::Spanned, DeriveInput, MetaNameValue};
 
-use crate::Identifier;
-
-use super::{Attribute, Attributes};
+use crate::{Attributes, Identifier};
 
 pub enum Error<'a> {
     Attributes(&'a Attributes),
@@ -16,7 +14,11 @@ impl<'a> From<Error<'a>> for syn::Error {
         match value {
             Error::Attributes(attr) => syn::Error::new(
                 attr.span(),
-                format!("expected `{}(..., ...)`, got {:#?}", Attributes::base(), attr),
+                format!(
+                    "expected `{}(..., ...)`, got {:#?}",
+                    Attributes::base(),
+                    attr
+                ),
             ),
             Error::Attribute(meta) => syn::Error::new(
                 meta.span(),
