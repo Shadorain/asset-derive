@@ -2,11 +2,11 @@ use syn::{spanned::Spanned, DeriveInput, MetaNameValue};
 
 use crate::Identifier;
 
-use super::{SubAttribute, Attribute};
+use super::{Attribute, Attributes};
 
 pub enum Error<'a> {
-    Attribute(&'a Attribute),
-    SubAttribute(&'a MetaNameValue),
+    Attributes(&'a Attributes),
+    Attribute(&'a MetaNameValue),
     Identifier(Option<String>),
     Data(&'a DeriveInput),
 }
@@ -14,11 +14,11 @@ pub enum Error<'a> {
 impl<'a> From<Error<'a>> for syn::Error {
     fn from(value: Error) -> Self {
         match value {
-            Error::Attribute(attr) => syn::Error::new(
+            Error::Attributes(attr) => syn::Error::new(
                 attr.span(),
-                format!("expected `{}(...)`, got {:#?}", Attribute::base(), attr),
+                format!("expected `{}(..., ...)`, got {:#?}", Attributes::base(), attr),
             ),
-            Error::SubAttribute(meta) => syn::Error::new(
+            Error::Attribute(meta) => syn::Error::new(
                 meta.span(),
                 format!("expected `sub_attribute = \" ... \"`, got {:#?}", meta),
             ),

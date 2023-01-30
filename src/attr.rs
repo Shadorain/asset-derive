@@ -5,7 +5,7 @@ use syn::{
 
 use crate::{Error, Identifier};
 
-/// Top-Level Attribute.
+/// Top-Level Attributes.
 ///
 /// * Stores a collection of it's sub-attributes.
 ///
@@ -17,15 +17,15 @@ use crate::{Error, Identifier};
 ///         ^- sub-attributes
 /// ```
 #[derive(Debug)]
-pub struct Attribute(Vec<SubAttribute>);
+pub struct Attributes(Vec<Attribute>);
 
-impl Spanned for Attribute {
+impl Spanned for Attributes {
     fn span(&self) -> Span {
         Span::call_site()
     }
 }
 
-impl Attribute {
+impl Attributes {
     const BASE_ATTR: &str = "asset";
 
     pub fn base() -> &'static str {
@@ -40,13 +40,13 @@ impl Attribute {
         Ok(Self(
             attrs
                 .iter()
-                .filter(|a| a.path.is_ident(Attribute::base()))
+                .filter(|a| a.path.is_ident(Attributes::base()))
                 .flat_map(|attr| {
                     attr.parse_args_with(Punctuated::<MetaNameValue, Token![,]>::parse_terminated)
                         .unwrap()
                 })
-                .map(|a| SubAttribute::from(&a))
-                .collect::<Result<Vec<SubAttribute>>>()?,
+                .map(|a| Attribute::from(&a))
+                .collect::<Result<Vec<Attribute>>>()?,
         ))
     }
 }
@@ -55,7 +55,6 @@ impl Attribute {
 ///
 /// * `ident`: Identifies the sub-attribute type.
 /// * `value`: Value to set for the sub-attribute.
-/// * `span`: Location of this rust block.
 ///
 /// # Example
 ///
@@ -65,12 +64,12 @@ impl Attribute {
 ///         ^- sub-attribute
 /// ```
 #[derive(Debug)]
-pub struct SubAttribute {
+pub struct Attribute {
     pub ident: Identifier,
-    value: String,
+    pub value: String,
 }
 
-impl SubAttribute {
+impl Attribute {
     pub fn from(meta: &'_ MetaNameValue) -> Result<Self> {
         // let meta = meta.clone();
         Ok(Self {
@@ -82,7 +81,7 @@ impl SubAttribute {
             )?,
             value: match meta.lit {
                 syn::Lit::Str(ref s) => s.value(),
-                _ => return Err(Error::SubAttribute(meta).into()),
+                _ => return Err(Error::Attribute(meta).into()),
             },
         })
     }

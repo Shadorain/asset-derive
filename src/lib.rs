@@ -7,7 +7,7 @@ mod attr;
 mod error;
 mod ident;
 
-use attr::{SubAttribute, Attribute};
+use attr::{Attribute, Attributes};
 use error::Error;
 use ident::Identifier;
 
@@ -37,7 +37,7 @@ fn impl_asset(input: &DeriveInput) -> Result<TokenStream> {
     };
     eprintln!("Variants: {:#?}", variants);
 
-    let top = Attribute::new(&input.attrs)?;
+    let top = Attributes::new(&input.attrs)?;
     eprintln!("TOP: {:#?}", top);
 
     Ok(TokenStream::new())
