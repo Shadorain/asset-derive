@@ -31,11 +31,11 @@ impl Attributes {
         Self::BASE_ATTR
     }
 
-    /// Creates a new `TopAttribute` from a collection of `syn::Attribute`s
+    /// Creates a new `Attribute` list from a collection of `syn::Attribute`s
     /// Pass any attributes in and they will be filtered accordingly.
     ///
     /// * `attrs`: List of Attributes to parse.
-    pub fn new(attrs: &'_ [syn::Attribute]) -> Result<Self> {
+    pub fn from(attrs: &'_ [syn::Attribute]) -> Result<Self> {
         Ok(Self(
             attrs
                 .iter()

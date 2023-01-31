@@ -30,7 +30,8 @@
 //! ```
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, Data, DeriveInput, Result};
+use quote::quote;
+use syn::{parse_macro_input, Data, DeriveInput, Generics, Ident, Result};
 
 mod attr;
 mod error;
@@ -42,20 +43,80 @@ use ident::Identifier;
 
 #[derive(Debug)]
 #[allow(dead_code)]
-struct Assets {
+struct Assets<'a> {
+    name: &'a Ident,
+    generics: &'a Generics,
     attrs: Attributes,
     variants: Vec<Variant>,
 }
 
-impl Assets {
-    pub fn new(input: &DeriveInput) -> Result<Self> {
+impl<'a> Assets<'a> {
+    /// ```
+    /// Assets {
+    ///     name: Ident {
+    ///         ident: "Icon",
+    ///         span: #0 bytes(99..103),
+    ///     },
+    ///     generics: Generics {
+    ///         lt_token: None,
+    ///         params: [],
+    ///         gt_token: None,
+    ///         where_clause: None,
+    ///     },
+    ///     attrs: Attributes(
+    ///         [
+    ///             Attribute {
+    ///                 ident: Basepath,
+    ///                 value: "./icons/",
+    ///             },
+    ///             Attribute {
+    ///                 ident: Extension,
+    ///                 value: "svg",
+    ///             },
+    ///         ],
+    ///     ),
+    ///     variants: [
+    ///         Variant {
+    ///             attrs: Attributes(
+    ///                 [
+    ///                     Attribute {
+    ///                         ident: Extension,
+    ///                         value: "png",
+    ///                     },
+    ///                 ],
+    ///             ),
+    ///             name: "Select",
+    ///         },
+    ///         Variant {
+    ///             attrs: Attributes(
+    ///                 [],
+    ///             ),
+    ///             name: "Folder",
+    ///         },
+    ///         Variant {
+    ///             attrs: Attributes(
+    ///                 [
+    ///                     Attribute {
+    ///                         ident: Filename,
+    ///                         value: "folder-dim",
+    ///                     },
+    ///                 ],
+    ///             ),
+    ///             name: "FolderDim",
+    ///         },
+    ///     ],
+    /// }
+    /// ```
+    pub fn from(input: &'a DeriveInput) -> Result<Self> {
         Ok(Self {
-            attrs: Attributes::new(&input.attrs)?,
+            name: &input.ident,
+            generics: &input.generics,
+            attrs: Attributes::from(&input.attrs)?,
             variants: match &input.data {
                 Data::Enum(ref data) => data
                     .variants
                     .iter()
-                    .map(Variant::new)
+                    .map(Variant::from)
                     .collect::<Result<Vec<Variant>>>()?,
                 _ => Err(Error::Data(input))?,
             },
@@ -64,8 +125,19 @@ impl Assets {
 
     /// Should build up the full quote and generated code.
     #[allow(dead_code)]
-    pub fn build(self) {
-        todo!();
+    pub fn build(self) -> TokenStream {
+        let (impl_generics, ty_generics, where_clause) = self.generics.split_for_impl();
+        let name = self.name;
+        quote! {
+            impl #impl_generics Asset for #name #ty_generics #where_clause {
+                fn fetch(&self) -> &'static [u8] {
+                    match self {
+
+                    }
+                }
+            }
+        }
+        .into()
     }
 }
 
@@ -77,9 +149,9 @@ struct Variant {
 }
 
 impl Variant {
-    pub fn new(var: &'_ syn::Variant) -> Result<Self> {
+    pub fn from(var: &'_ syn::Variant) -> Result<Self> {
         Ok(Self {
-            attrs: Attributes::new(&var.attrs)?,
+            attrs: Attributes::from(&var.attrs)?,
             name: var.ident.to_string(),
         })
     }
@@ -92,8 +164,9 @@ pub fn derive_asset(input: TokenStream) -> TokenStream {
 }
 
 fn impl_asset(input: &DeriveInput) -> Result<TokenStream> {
-    let assets = Assets::new(input);
+    let assets = Assets::from(input)?;
     eprintln!("Assets: {:#?}", assets);
+    eprintln!("Build: {:#?}", assets.build().to_string());
 
     Ok(TokenStream::new())
 }
