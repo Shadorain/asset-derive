@@ -31,23 +31,24 @@
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Generics, Ident, Result};
+use syn::{parse_macro_input, DeriveInput, Generics, Ident, Result};
 
 mod attr;
 mod error;
 mod ident;
+mod variant;
 
 use attr::Attributes;
 use error::Error;
 use ident::Identifier;
+use variant::Variants;
 
 #[derive(Debug)]
-#[allow(dead_code)]
 struct Assets<'a> {
     name: &'a Ident,
     generics: &'a Generics,
     attrs: Attributes,
-    variants: Vec<Variant>,
+    variants: Variants,
 }
 
 impl<'a> Assets<'a> {
@@ -112,48 +113,27 @@ impl<'a> Assets<'a> {
             name: &input.ident,
             generics: &input.generics,
             attrs: Attributes::from(&input.attrs)?,
-            variants: match &input.data {
-                Data::Enum(ref data) => data
-                    .variants
-                    .iter()
-                    .map(Variant::from)
-                    .collect::<Result<Vec<Variant>>>()?,
-                _ => Err(Error::Data(input))?,
-            },
+            variants: Variants::from(input)?,
         })
     }
 
     /// Should build up the full quote and generated code.
-    #[allow(dead_code)]
     pub fn build(self) -> TokenStream {
         let (impl_generics, ty_generics, where_clause) = self.generics.split_for_impl();
         let name = self.name;
+        let getters = self.variants.build_getters(&self.attrs);
+        let arms = self.variants.build_arms();
         quote! {
-            impl #impl_generics Asset for #name #ty_generics #where_clause {
-                fn fetch(&self) -> &'static [u8] {
+            impl #impl_generics #name #ty_generics #where_clause {
+                #(#getters)*
+                pub fn fetch(&self) -> Vec<u8> {
                     match self {
-
-                    }
+                        #(#arms),*
+                    }.to_vec()
                 }
             }
         }
         .into()
-    }
-}
-
-#[derive(Debug)]
-#[allow(dead_code)]
-struct Variant {
-    attrs: Attributes,
-    name: String,
-}
-
-impl Variant {
-    pub fn from(var: &'_ syn::Variant) -> Result<Self> {
-        Ok(Self {
-            attrs: Attributes::from(&var.attrs)?,
-            name: var.ident.to_string(),
-        })
     }
 }
 
@@ -164,9 +144,5 @@ pub fn derive_asset(input: TokenStream) -> TokenStream {
 }
 
 fn impl_asset(input: &DeriveInput) -> Result<TokenStream> {
-    let assets = Assets::from(input)?;
-    eprintln!("Assets: {:#?}", assets);
-    eprintln!("Build: {:#?}", assets.build().to_string());
-
-    Ok(TokenStream::new())
+    Ok(Assets::from(input)?.build())
 }

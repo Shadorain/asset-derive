@@ -48,6 +48,14 @@ impl Attributes {
                 .collect::<Result<Vec<Attribute>>>()?,
         ))
     }
+
+    pub fn get(&self, ident: Identifier) -> Option<&'_ str> {
+        Some(&self.0.iter().find(|a| a.ident == ident)?.value)
+    }
+
+    pub fn get_or(&self, ident: Identifier) -> &'_ str {
+        self.get(ident).unwrap_or(ident.default())
+    }
 }
 
 /// Sub-Level Attribute.
