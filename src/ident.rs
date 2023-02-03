@@ -43,20 +43,25 @@ impl Display for Identifier {
 }
 
 impl Identifier {
-    /// Iterator over all `SubIdent` variants.
+    /// Iterator over all sub-attribute `Identifiers`.
     pub fn list() -> impl Iterator<Item = Identifier> {
         [Self::Basepath, Self::Filename, Self::Extension].into_iter()
     }
+    /// String list from all `Identifiers`.
     pub fn str_list() -> Vec<&'static str> {
         Self::list().map(|i| i.into()).collect::<Vec<&str>>()
     }
 
+    /// Attempts to create an `Identifier` from a passed string.
+    ///
+    /// * `value`: string to find.
     pub fn from_string(value: String) -> Result<Self> {
         Ok(Identifier::list()
             .find(|&i| Into::<&str>::into(i) == value)
             .ok_or(Error::Identifier(Some(value)))?)
     }
 
+    /// Returns default identifier value.
     pub fn default(&self) -> &'static str {
         match self {
             Identifier::Basepath => "./",

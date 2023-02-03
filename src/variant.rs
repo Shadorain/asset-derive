@@ -5,10 +5,16 @@ use quote::{
 };
 use syn::{Data, DeriveInput, Ident, Result};
 
+/// Variants wrapper.
+///
+/// * Stores a collection of all parsed enum variants.
 #[derive(Debug)]
 pub struct Variants(Vec<Variant>);
 
 impl Variants {
+    /// Creates a list of variants from a macro input.
+    ///
+    /// * `input`: Parsed macro input.
     pub fn from(input: &'_ DeriveInput) -> Result<Self> {
         Ok(Self(match input.data {
             Data::Enum(ref data) => data
@@ -20,6 +26,17 @@ impl Variants {
         }))
     }
 
+    /// Builds a list of getter methods for each variant.
+    ///
+    /// * `attrs`: Base-level attribute list.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// fn get_select() -> &'static [u8] {
+    ///     include_bytes!("./assets/select.png")
+    /// }
+    /// ```
     pub fn build_getters(&self, attrs: &'_ Attributes) -> Vec<TokenStream> {
         let ext = attrs.get_or(Identifier::Extension);
         let basepath = attrs.get_or(Identifier::Basepath);
@@ -42,6 +59,14 @@ impl Variants {
             .collect()
     }
 
+    /// Builds a list of match arms for each variant.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// Variant1 => Self::VARIANT1
+    /// }
+    /// ```
     pub fn build_arms(&self) -> Vec<TokenStream> {
         self.0
             .iter()
@@ -57,12 +82,26 @@ impl Variants {
 }
 
 #[derive(Debug)]
+/// Parsed Variant type (from `syn::Variant`).
+///
+/// * `attrs`: Variant's attribute list.
+/// * `name`: Identifier of the enum variant.
+///
+/// ## Example
+///
+/// ```
+/// #[asset(filename = "folder", ext = "jpg")]
+/// FolderJpg,
+/// ```
 struct Variant {
     attrs: Attributes,
     name: String,
 }
 
 impl Variant {
+    /// Creates a `Variant` from a `syn::Variant`.
+    ///
+    /// * `var`: variant to be parsed.
     pub fn from(var: &'_ syn::Variant) -> Result<Self> {
         Ok(Self {
             attrs: Attributes::from(&var.attrs)?,
@@ -70,19 +109,26 @@ impl Variant {
         })
     }
 
+    /// Returns an overriden attribute defined filename
+    /// or the enum identifier lowercased.
     pub fn filename(&self) -> String {
         self.attrs
             .get(Identifier::Filename)
             .map(|s| s.to_string())
             .unwrap_or_else(|| self.name.to_lowercase())
     }
+
+    /// Returns extension from attribute if exists.
     pub fn ext(&self) -> Option<&'_ str> {
         self.attrs.get(Identifier::Extension)
     }
+
+    /// Returns basepath from attribute if exists.
     pub fn path(&self) -> Option<&'_ str> {
         self.attrs.get(Identifier::Basepath)
     }
 
+    /// Builds a getter method identifier.
     pub fn getter(&self) -> Ident {
         format_ident!("get_{}", self.name.to_lowercase())
     }

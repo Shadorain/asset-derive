@@ -2,6 +2,7 @@ use syn::{spanned::Spanned, DeriveInput, MetaNameValue};
 
 use crate::{Attributes, Identifier};
 
+/// `Asset` errors enumeration.
 pub enum Error<'a> {
     Attributes(&'a Attributes),
     Attribute(&'a MetaNameValue),
@@ -10,6 +11,7 @@ pub enum Error<'a> {
 }
 
 impl<'a> From<Error<'a>> for syn::Error {
+    /// Converts custom `Asset` error into `syn::Error`.
     fn from(value: Error) -> Self {
         match value {
             Error::Attributes(attr) => syn::Error::new(
@@ -22,7 +24,7 @@ impl<'a> From<Error<'a>> for syn::Error {
             ),
             Error::Attribute(meta) => syn::Error::new(
                 meta.span(),
-                format!("expected `sub_attribute = \" ... \"`, got {:#?}", meta),
+                format!("expected `sub_attribute = \" ... \"`, got {meta:#?}"),
             ),
             // This one is quite a struggle... definitely something to refactor...
             Error::Identifier(ref s) => syn::Error::new(
