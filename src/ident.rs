@@ -13,7 +13,7 @@ use crate::{Error, Result};
 ///   ^- top-lvl attribute
 ///         ^- sub-identifier
 /// ```
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Identifier {
     Basepath,
     Filename,
@@ -25,7 +25,7 @@ impl From<Identifier> for &'static str {
         match value {
             Identifier::Basepath => "basepath",
             Identifier::Filename => "filename",
-            Identifier::Extension => "extension",
+            Identifier::Extension => "ext",
 
             #[allow(unreachable_patterns)]
             _ => {
@@ -43,31 +43,30 @@ impl Display for Identifier {
 }
 
 impl Identifier {
-    /// Iterator over all `SubIdent` variants.
+    /// Iterator over all sub-attribute `Identifiers`.
     pub fn list() -> impl Iterator<Item = Identifier> {
         [Self::Basepath, Self::Filename, Self::Extension].into_iter()
     }
+    /// String list from all `Identifiers`.
     pub fn str_list() -> Vec<&'static str> {
         Self::list().map(|i| i.into()).collect::<Vec<&str>>()
     }
 
+    /// Attempts to create an `Identifier` from a passed string.
+    ///
+    /// * `value`: string to find.
     pub fn from_string(value: String) -> Result<Self> {
         Ok(Identifier::list()
             .find(|&i| Into::<&str>::into(i) == value)
             .ok_or(Error::Identifier(Some(value)))?)
     }
-    //
-    // /// Retrieves an attribute from known identifier (`self`).
-    // /// Returns `None` if doesn't exist.
-    // ///
-    // /// * `attrs`: List of attributes to search.
-    // fn get_attribute<'a>(&'a self, attrs: &'a [Attribute]) -> Option<&'a Attribute> {
-    //     self.get_attributes(attrs).next()
-    // }
-    //
-    // fn get_attributes<'a>(&'a self, attrs: &'a [Attribute]) -> impl Iterator<Item = &'a Attribute> {
-    //     attrs
-    //         .iter()
-    //         .filter(|a| a.path.is_ident(Into::<&str>::into(*self)))
-    // }
+
+    /// Returns default identifier value.
+    pub fn default(&self) -> &'static str {
+        match self {
+            Identifier::Basepath => "./",
+            Identifier::Filename => "file",
+            Identifier::Extension => "",
+        }
+    }
 }
