@@ -38,9 +38,9 @@
 //! use asset_derive::Asset;
 //!
 //! #[derive(Asset)]
-//! #[asset(basepath = "./icons/", extension = "svg")]
+//! #[asset(basepath = "./icons/", ext = "svg")]
 //! enum Icon {
-//!     #[asset(extension = "png")]
+//!     #[asset(ext = "png")]
 //!     Select,
 //!     Folder,
 //!     #[asset(filename = "folder-dim")]
