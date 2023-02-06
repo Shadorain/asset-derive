@@ -1,14 +1,18 @@
 [package]
-name = "asset-derive"
+name = "asset-derive-macro"
 version = "0.1.2"
 edition = "2021"
 authors = ["Shadorain <jordanf7517@gmail.com>"]
 description = "Simple asset handling derive macro for enums, and a proc-macro learning resource!"
 readme = "README.md"
-license = "GPL-3.0"
 repository = "https://github.com/Shadorain/asset-derive"
 keywords = ["asset", "assets", "derive"]
 categories = ["derive", "proc-macro"]
 
+[lib]
+name = "asset_derive_macro"
+proc-macro = true
+
 [dependencies]
-asset-derive-macro = { path = "asset-derive" }
+quote = "1.0.23"
+syn = { version = "1.0.107", features = ["full", "extra-traits"] }
