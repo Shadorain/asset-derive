@@ -11,4 +11,4 @@ keywords = ["asset", "assets", "derive"]
 categories = ["derive", "proc-macro"]
 
 [dependencies]
-asset-derive-macro = { path = "asset-derive" }
+asset-derive-macro = { version = "0.1.2", path = "asset-derive" }
