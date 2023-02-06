@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["Shadorain <jordanf7517@gmail.com>"]
 description = "Simple asset handling derive macro for enums, and a proc-macro learning resource!"
 readme = "README.md"
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/Shadorain/asset-derive"
 keywords = ["asset", "assets", "derive"]
 categories = ["derive", "proc-macro"]
