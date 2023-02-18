@@ -26,4 +26,6 @@ enum Icon {
 fn main() {
     println!("Folder: {}", String::from_utf8(Icon::Folder.fetch()).unwrap());
     println!("Icon: {}", String::from_utf8(Icon::Icon.fetch()).unwrap());
+
+    println!("Static Icon Data: {}", String::from_utf8_lossy(Icon::Icon.fetch_static()));
 }

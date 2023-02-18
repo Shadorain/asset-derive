@@ -60,7 +60,7 @@
 //!
 //! ### Code Tree
 //!
-//! ```
+//! ```ignore
 //! asset-derive/               <-- Crate to use (trait implementation)
 //!     src/
 //!     examples/               <-- Houses examples using the trait and macro itself.
@@ -70,11 +70,11 @@
 //!
 //! ## Example
 //!
-//! ```rust
+//! ```no_run
 //! use asset_derive::Asset;
 //!
 //! #[derive(Asset)]
-//! #[asset(basepath = "./icons/", ext = "svg")]
+//! #[asset(basepath = "../examples/assets/", ext = "svg")]
 //! enum Icon {
 //!     #[asset(ext = "png")]
 //!     Select,
@@ -82,6 +82,9 @@
 //!     #[asset(filename = "folder-dim")]
 //!     FolderDim,
 //! }
+//!
+//! Icon::Select.fetch();
+//! Icon::FolderDim.fetch_static();
 //! ```
 pub use asset_derive_macro::Asset;
 
@@ -91,8 +94,21 @@ pub trait Asset {
     ///
     /// ## Example
     ///
-    /// ```
+    /// ```ignore
     /// let data = Icon::Select.fetch();
     /// ```
     fn fetch(&self) -> Vec<u8>;
+
+    /// Method responsible for fetching requested static resource.
+    ///
+    /// NOTE: this returns an `Option<&'static [u8]>` because it will
+    /// only be useable for compile-time loaded resources. Dynamic
+    /// will return `None`.
+    ///
+    /// ## Example
+    ///
+    /// ```ignore
+    /// let static_data = Icon::Select.fetch_static().unwrap();
+    /// ```
+    fn fetch_static(&self) -> &'static [u8];
 }

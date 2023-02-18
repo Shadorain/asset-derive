@@ -10,7 +10,7 @@ use crate::{Error, Identifier};
 ///
 /// # Example
 ///
-/// ```no_run
+/// ```ignore
 /// #[asset( ... , ... , ... )]
 ///   ^- top-lvl attribute
 ///         ^- sub-attributes
@@ -76,7 +76,7 @@ impl Attributes {
 ///
 /// # Example
 ///
-/// ```no_run
+/// ```ignore
 /// #[asset(ident = "value")]
 ///   ^- top-lvl attribute
 ///         ^- sub-attribute

@@ -32,7 +32,7 @@ impl Variants {
     ///
     /// ## Example
     ///
-    /// ```
+    /// ```ignore
     /// fn get_select() -> &'static [u8] {
     ///     include_bytes!("./assets/select.png")
     /// }
@@ -63,7 +63,7 @@ impl Variants {
     ///
     /// ## Example
     ///
-    /// ```
+    /// ```ignore
     /// Variant1 => Self::VARIANT1
     /// }
     /// ```
@@ -89,7 +89,7 @@ impl Variants {
 ///
 /// ## Example
 ///
-/// ```
+/// ```ignore
 /// #[asset(filename = "folder", ext = "jpg")]
 /// FolderJpg,
 /// ```

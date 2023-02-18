@@ -58,6 +58,11 @@ impl<'a> Assets<'a> {
                         #(#arms),*
                     }.to_vec()
                 }
+                fn fetch_static(&self) -> &'static [u8] {
+                    match self {
+                        #(#arms),*
+                    }
+                }
             }
         }
         .into()
@@ -66,7 +71,7 @@ impl<'a> Assets<'a> {
 
 /// Provides a derive macro for the `Asset` trait.
 ///
-/// ```
+/// ```ignore
 /// #[derive(Asset)]
 /// ```
 #[proc_macro_derive(Asset, attributes(asset))]

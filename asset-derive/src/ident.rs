@@ -8,7 +8,7 @@ use crate::{Error, Result};
 ///
 /// # Example
 ///
-/// ```no_run
+/// ```ignore
 /// #[asset(ident = "value")]
 ///   ^- top-lvl attribute
 ///         ^- sub-identifier
