@@ -71,7 +71,7 @@ impl<'a> Assets<'a> {
 
 /// Provides a derive macro for the `Asset` trait.
 ///
-/// ```no_run
+/// ```ignore
 /// #[derive(Asset)]
 /// ```
 #[proc_macro_derive(Asset, attributes(asset))]

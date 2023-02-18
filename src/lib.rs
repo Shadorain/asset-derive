@@ -60,7 +60,7 @@
 //!
 //! ### Code Tree
 //!
-//! ```no_run
+//! ```ignore
 //! asset-derive/               <-- Crate to use (trait implementation)
 //!     src/
 //!     examples/               <-- Houses examples using the trait and macro itself.
@@ -74,7 +74,7 @@
 //! use asset_derive::Asset;
 //!
 //! #[derive(Asset)]
-//! #[asset(basepath = "./icons/", ext = "svg")]
+//! #[asset(basepath = "../examples/assets/", ext = "svg")]
 //! enum Icon {
 //!     #[asset(ext = "png")]
 //!     Select,
@@ -83,8 +83,8 @@
 //!     FolderDim,
 //! }
 //!
-//! Icon::Select.fetch()
-//! Icon::FolderDim.fetch_static()
+//! Icon::Select.fetch();
+//! Icon::FolderDim.fetch_static();
 //! ```
 pub use asset_derive_macro::Asset;
 
@@ -94,7 +94,7 @@ pub trait Asset {
     ///
     /// ## Example
     ///
-    /// ```no_run
+    /// ```ignore
     /// let data = Icon::Select.fetch();
     /// ```
     fn fetch(&self) -> Vec<u8>;
@@ -107,7 +107,7 @@ pub trait Asset {
     ///
     /// ## Example
     ///
-    /// ```no_run
+    /// ```ignore
     /// let static_data = Icon::Select.fetch_static().unwrap();
     /// ```
     fn fetch_static(&self) -> &'static [u8];
