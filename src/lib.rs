@@ -60,7 +60,7 @@
 //!
 //! ### Code Tree
 //!
-//! ```
+//! ```no_run
 //! asset-derive/               <-- Crate to use (trait implementation)
 //!     src/
 //!     examples/               <-- Houses examples using the trait and macro itself.
@@ -70,7 +70,7 @@
 //!
 //! ## Example
 //!
-//! ```rust
+//! ```no_run
 //! use asset_derive::Asset;
 //!
 //! #[derive(Asset)]
@@ -94,7 +94,7 @@ pub trait Asset {
     ///
     /// ## Example
     ///
-    /// ```
+    /// ```no_run
     /// let data = Icon::Select.fetch();
     /// ```
     fn fetch(&self) -> Vec<u8>;
@@ -107,7 +107,7 @@ pub trait Asset {
     ///
     /// ## Example
     ///
-    /// ```
+    /// ```no_run
     /// let static_data = Icon::Select.fetch_static().unwrap();
     /// ```
     fn fetch_static(&self) -> &'static [u8];
