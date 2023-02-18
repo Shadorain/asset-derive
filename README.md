@@ -82,4 +82,7 @@ enum Icon {
     #[asset(filename = "folder-dim")]
     FolderDim,
 }
+
+Icon::Select.fetch()
+Icon::FolderDim.fetch_static()
 ```

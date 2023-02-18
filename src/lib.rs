@@ -82,6 +82,9 @@
 //!     #[asset(filename = "folder-dim")]
 //!     FolderDim,
 //! }
+//!
+//! Icon::Select.fetch()
+//! Icon::FolderDim.fetch_static()
 //! ```
 pub use asset_derive_macro::Asset;
 
@@ -95,4 +98,17 @@ pub trait Asset {
     /// let data = Icon::Select.fetch();
     /// ```
     fn fetch(&self) -> Vec<u8>;
+
+    /// Method responsible for fetching requested static resource.
+    ///
+    /// NOTE: this returns an `Option<&'static [u8]>` because it will
+    /// only be useable for compile-time loaded resources. Dynamic
+    /// will return `None`.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// let static_data = Icon::Select.fetch_static().unwrap();
+    /// ```
+    fn fetch_static(&self) -> &'static [u8];
 }

@@ -58,6 +58,11 @@ impl<'a> Assets<'a> {
                         #(#arms),*
                     }.to_vec()
                 }
+                fn fetch_static(&self) -> &'static [u8] {
+                    match self {
+                        #(#arms),*
+                    }
+                }
             }
         }
         .into()
